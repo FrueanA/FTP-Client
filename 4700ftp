@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+import sys
+import argparse
+
+from ftp_operations import (
+    cmd_ls,
+    cmd_mkdir,
+    cmd_rm,
+    cmd_rmdir,
+    cmd_cp,
+    cmd_mv,
+)
+
+from helpers import InvalidArgumentsError
+
+
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="4700ftp",
+        description=(
+            "FTP client for listing, copying, moving, and deleting "
+            "files and directories on remote FTP servers."
+        ),
+    )
+
+    parser.add_argument(
+        "operation",
+        help="One of: ls, mkdir, rm, rmdir, cp, mv",
+    )
+
+    # 1 or 2 parameters depending on operation
+    parser.add_argument(
+        "params",
+        nargs="+",
+        help="Parameters for the given operation (1 or 2 values).",
+    )
+
+    parser.add_argument(
+        "-v", "--verbose",
+        action="store_true",
+        help="Print FTP protocol messages to stderr.",
+    )
+
+    args = parser.parse_args(argv)
+    return args
+
+
+def main(argv=None):
+    args = parse_args(argv)
+
+    op = args.operation
+    params = args.params
+    verbose = args.verbose
+
+    try:
+        if op == "ls":
+            if len(params) != 1:
+                raise InvalidArgumentsError("ls requires exactly 1 parameter: <URL>")
+            cmd_ls(params[0], verbose=verbose)
+
+        elif op == "mkdir":
+            if len(params) != 1:
+                raise InvalidArgumentsError("mkdir requires exactly 1 parameter: <URL>")
+            cmd_mkdir(params[0], verbose=verbose)
+
+        elif op == "rm":
+            if len(params) != 1:
+                raise InvalidArgumentsError("rm requires exactly 1 parameter: <URL>")
+            cmd_rm(params[0], verbose=verbose)
+
+        elif op == "rmdir":
+            if len(params) != 1:
+                raise InvalidArgumentsError("rmdir requires exactly 1 parameter: <URL>")
+            cmd_rmdir(params[0], verbose=verbose)
+
+        elif op == "cp":
+            if len(params) != 2:
+                raise InvalidArgumentsError("cp requires exactly 2 parameters: <ARG1> <ARG2>")
+            cmd_cp(params[0], params[1], verbose=verbose)
+
+        elif op == "mv":
+            if len(params) != 2:
+                raise InvalidArgumentsError("mv requires exactly 2 parameters: <ARG1> <ARG2>")
+            cmd_mv(params[0], params[1], verbose=verbose)
+
+        else:
+            raise InvalidArgumentsError(f"Unknown operation '{op}'. Expected ls, mkdir, rm, rmdir, cp, or mv.")
+
+    except InvalidArgumentsError as e:
+        # Argument errors, prints message and exits
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Fatal error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
