@@ -1,4 +1,4 @@
-# 4700ftp — FTP Client
+# 4700ftp — File Transfer Protocol Client
 
 ## Overview
 This project implements a basic FTP client that communicates directly with an FTP server using raw socket connections. It supports essential operations such as listing directories, creating and removing directories, transferring files, and moving files between local and remote paths. The client uses both a control channel for commands and a data channel for file transfers, following the FTP protocol specification.
