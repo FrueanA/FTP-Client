@@ -28,3 +28,13 @@ I tested each command against the course FTP server:
 - Ensured the client runs cleanly on CCIS Linux machines
 
 ## How to Run
+```./4700ftp <operation> <param1> [param2]```
+
+Valid operations: `ls`, `mkdir`, `rm`, `rmdir`, `cp`, `mv`
+
+## Build
+Use the included Makefile: 
+`make`
+
+## Notes
+No FTP libraries were used; all protocol messages were implemented manually over TCP sockets.
